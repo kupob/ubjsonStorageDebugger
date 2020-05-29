@@ -6,13 +6,13 @@
 
 int main()
 {
-    ubjsonStorage::Storage s;
+    storage::Storage s;
 
     std::string testString {"This is the first string for tests"};
     std::string testString2 {"This is the second string for tests"};
 
-    ubjsonStorage::TimeStamp time = std::time(nullptr);
-    ubjsonStorage::TimeStamp time2 = time + 1;
+    storage::TimeStamp time = std::time(nullptr);
+    storage::TimeStamp time2 = time + 1;
 
     s.save(time, testString);
     s.save(time2, testString2);
