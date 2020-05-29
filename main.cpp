@@ -1,18 +1,18 @@
 #include <iostream>
 
-#include "ebmlio/Storage.h"
-#include "ebmlio/logger/log.h"
-#include "ebmlio/dataTypes/stdSupport.h"
+#include "ubjsonStorage/Storage.h"
+#include "ubjsonStorage/logger/log.h"
+#include "ubjsonStorage/dataTypes/stdSupport.h"
 
 int main()
 {
-    ebmlio::Storage s;
+    ubjsonStorage::Storage s;
 
     std::string testString {"This is the first string for tests"};
     std::string testString2 {"This is the second string for tests"};
 
-    ebmlio::TimeStamp time = std::time(nullptr);
-    ebmlio::TimeStamp time2 = time + 1;
+    ubjsonStorage::TimeStamp time = std::time(nullptr);
+    ubjsonStorage::TimeStamp time2 = time + 1;
 
     s.save(time, testString);
     s.save(time2, testString2);

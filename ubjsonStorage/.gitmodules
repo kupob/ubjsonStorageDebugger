@@ -1,0 +1,9 @@
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json
+[submodule "libebml"]
+	path = libebml
+	url = https://github.com/Matroska-Org/libebml
+[submodule "UbjsonCpp"]
+	path = UbjsonCpp
+	url = https://github.com/WhiZTiM/UbjsonCpp
