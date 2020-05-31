@@ -3,6 +3,8 @@ project(ebml_debugger)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_definitions(LOG_LEVEL=2)
+
 add_subdirectory(ubjsonStorage)
 
 add_executable(ebml_debugger main.cpp)
