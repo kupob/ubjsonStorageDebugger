@@ -8,6 +8,13 @@
 #include "ubjsonStorage/logger/log.h"
 #include "ubjsonStorage/stdSupport.h"
 
+storage::TimeStamp getTime()
+{
+    auto now = std::chrono::system_clock::now();
+    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+    return now_ms.time_since_epoch().count();
+}
+
 Tests::Tests()
     : m_storage(new storage::Storage())
 {
@@ -21,8 +28,9 @@ Tests::~Tests()
 
 void Tests::run()
 {
-    test1();
-    test2();
+//    test1();
+//    test2();
+    test3();
 }
 
 ///< Store two strings separately and load it back
@@ -31,9 +39,7 @@ void Tests::test1()
     std::string testString {"This is the first string for tests"};
     std::string testString2 {"This is the second string for tests"};
 
-    auto now = std::chrono::system_clock::now();
-    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-    storage::TimeStamp time = now_ms.time_since_epoch().count();
+    storage::TimeStamp time = getTime();
     storage::TimeStamp time2 = time + 1;
 
     m_storage->save(time, testString);
@@ -56,18 +62,67 @@ void Tests::test1()
 ///< Store many big items
 void Tests::test2()
 {
-    auto now = std::chrono::system_clock::now();
-    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-    storage::TimeStamp time = now_ms.time_since_epoch().count();
-
+    storage::TimeStamp time = getTime();
 
     m_storage->beginInsert(time);
 
     for (int i = 0; i <= 2000; ++i) {
         std::string testString {"This is very big big big big big big big big big big big big big big big big big string for tests number " + std::to_string(i)};
-        m_storage->save(time + i, testString);
+        m_storage->insert(time + i, testString);
     }
 
     m_storage->endInsert();
 }
 
+struct test3struct {
+    std::string stringValue;
+    int intValue;
+    double doubleValue;
+    bool boolValue;
+
+    bool operator==(const test3struct& other) const {
+        return stringValue == other.stringValue
+            && intValue == other.intValue
+            && doubleValue == other.doubleValue
+            && boolValue == other.boolValue;
+    }
+};
+
+namespace storage
+{
+
+template<>
+std::optional<test3struct> deserialize(const RawData &data)
+{
+    return test3struct { data[0], data[1], data[2], data[3] };
+}
+
+template<>
+RawData serialize(const test3struct &data)
+{
+    return { {data.stringValue}, {data.intValue}, {data.doubleValue}, {data.boolValue} };
+}
+
+} // namespace storage
+
+void Tests::test3() ///< Store custom struct
+{
+    storage::TimeStamp time = getTime();
+    test3struct s {"This is string for tests", 6666666, 1234567.1234567, true};
+
+    m_storage->save(time, s);
+
+    auto result = m_storage->load<test3struct>(time);
+
+    if (result.has_value() && result.value() == s) {
+        LOG ("Test 3 passed");
+    }
+    else {
+        LOGERROR ("Test 3 not passed");
+        LOGERROR("source:");
+        LOGERROR(s.stringValue << " " << s.intValue << " " << s.doubleValue << " " << s.boolValue);
+        LOGERROR("result:");
+        LOGERROR(result->stringValue << " " << result->intValue << " " << result->doubleValue << " " << result->boolValue);
+    }
+
+}
