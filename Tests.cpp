@@ -30,7 +30,8 @@ void Tests::run()
 {
 //    test1();
 //    test2();
-    test3();
+//    test3();
+    test4();
 }
 
 ///< Store two strings separately and load it back
@@ -125,4 +126,25 @@ void Tests::test3() ///< Store custom struct
         LOGERROR(result->stringValue << " " << result->intValue << " " << result->doubleValue << " " << result->boolValue);
     }
 
+}
+
+void Tests::test4() ///< Store double
+{
+    storage::TimeStamp time = getTime();
+
+    double src = 123.1234567;
+    m_storage->save(time, src);
+
+    auto result = m_storage->load<double>(time).value_or(0.0);
+
+    if (result == src) {
+        LOG ("Test 4 passed");
+    }
+    else {
+        LOGERROR ("Test 4 not passed");
+        LOGERROR("source:");
+        LOGERROR(src);
+        LOGERROR("result:");
+        LOGERROR(result);
+    }
 }
