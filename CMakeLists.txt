@@ -7,6 +7,6 @@ add_compile_definitions(LOG_LEVEL=2)
 
 add_subdirectory(ubjsonStorage)
 
-add_executable(ebml_debugger main.cpp)
+add_executable(ebml_debugger main.cpp Tests.h Tests.cpp)
 
 target_link_libraries(ebml_debugger PRIVATE ubjsonStorage)
