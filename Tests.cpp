@@ -1,14 +1,11 @@
 
 #include "Tests.h"
 
-#include <iostream>
 #include <chrono>
 
-#include "ubjsonStorage/Storage.h"
-#include "ubjsonStorage/logger/log.h"
 #include "ubjsonStorage/stdSupport.h"
 
-storage::TimeStamp getTime()
+storage::TimeStamp Tests::getTime()
 {
     auto now = std::chrono::system_clock::now();
     auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -31,7 +28,19 @@ void Tests::run()
 //    test1();
 //    test2();
 //    test3();
-    test4();
+
+    testType <bool>          (true);
+    testType <int8_t>        (127);
+    testType <uint8_t>       (255);
+    testType <int16_t>       (32666);
+    testType <uint16_t>      (64777);
+    testType <int>           (1234567890);
+    testType <unsigned int>  (4242424242);
+    testType <int64_t>       (8'800'555'35'35);
+    testType <uint64_t>      (8'800'999'99'99);
+    testType <float>         (123.456);
+    testType <double>        (8'800.555'35'35);
+    testType <std::string>   ("The quick brown fox jumps over the lazy dog");
 }
 
 ///< Store two strings separately and load it back
@@ -51,7 +60,7 @@ void Tests::test1()
 
     if (testString == resultString &&
         testString2 == resultString2) {
-        LOG ("Test 1 passed");
+        LOGERROR ("Test 1 passed");
     }
     else {
         LOGERROR("Test 1 not passed");
@@ -116,7 +125,7 @@ void Tests::test3() ///< Store custom struct
     auto result = m_storage->load<test3struct>(time);
 
     if (result.has_value() && result.value() == s) {
-        LOG ("Test 3 passed");
+        LOGERROR ("Test 3 passed");
     }
     else {
         LOGERROR ("Test 3 not passed");
@@ -124,27 +133,5 @@ void Tests::test3() ///< Store custom struct
         LOGERROR(s.stringValue << " " << s.intValue << " " << s.doubleValue << " " << s.boolValue);
         LOGERROR("result:");
         LOGERROR(result->stringValue << " " << result->intValue << " " << result->doubleValue << " " << result->boolValue);
-    }
-
-}
-
-void Tests::test4() ///< Store double
-{
-    storage::TimeStamp time = getTime();
-
-    double src = 123.1234567;
-    m_storage->save(time, src);
-
-    auto result = m_storage->load<double>(time).value_or(0.0);
-
-    if (result == src) {
-        LOG ("Test 4 passed");
-    }
-    else {
-        LOGERROR ("Test 4 not passed");
-        LOGERROR("source:");
-        LOGERROR(src);
-        LOGERROR("result:");
-        LOGERROR(result);
     }
 }
